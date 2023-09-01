@@ -6,6 +6,9 @@ class MaskRCNN:
         # Loading Mask RCNN
         self.net = cv2.dnn.readNetFromTensorflow("dnn/frozen_inference_graph_coco.pb",
                                                  "dnn/mask_rcnn_inception_v2_coco_2018_01_28.pbtxt")
+        out_names = self.net.getUnconnectedOutLayersNames()
+        print(out_names)
+
         self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
         self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
@@ -26,7 +29,7 @@ class MaskRCNN:
         blob = cv2.dnn.blobFromImage(bgr_frame, swapRB=True)
         self.net.setInput(blob)
 
-        boxes, _ = self.net.forward(["detection_out_final"])
+        boxes, masks = self.net.forward(["detection_out_final",  "detection_masks"])
 
         frame_height, frame_width, _ = bgr_frame.shape
         detection_count = boxes.shape[2]

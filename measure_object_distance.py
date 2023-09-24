@@ -3,7 +3,7 @@ import cv2
 from realsense_camera import *
 from mask_rcnn import *
 
-# Load Realsense camera
+# Load Realsense camera and intializing mrcnn for object classification
 rs = RealsenseCamera()
 mrcnn = MaskRCNN()
 
@@ -11,13 +11,13 @@ while True:
 	# Obtaining frames in real time using the real sense camera
 	ret, bgr_frame, depth_frame = rs.get_frame_stream()
 	cv2.imshow("BGR frame", bgr_frame)
+	cv2.imshow("Depth Frame", depth_frame)
 	# Boxes = the box surrounding the identified object 
 	# Classes = the type of object being detected
 	# Contours = outline of the object 
 	# Centers = Point of reference used to get the distance
-	boxes, classes, centers = mrcnn.detect_objects_mask(bgr_frame)
 
-	# Printing out information
+	boxes, classes, centers = mrcnn.detect_objects_mask(bgr_frame)
 	
 	# Handles getting the distance from the camera to the classified object from the 	
 	distances = [depth_frame[cy][cx] for (cx, cy) in centers]
